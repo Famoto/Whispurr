@@ -227,6 +227,32 @@ sequenceDiagram
 
 ```
 
+## Uploading PreKeys
+
+```mermaid
+sequenceDiagram
+    participant Client as Client
+    participant Server as Server
+
+    Note over Client: Client generates new one-time pre-keys
+    Client->>Client: Generate new one-time pre-keys
+    Client->>Client: Create request payload with one-time pre-keys
+    Client->>Client: Hash payload with BLAKE2b
+    Client->>Client: Sign hash with private IdentityKey (Ed25519)
+    Client->>Server: Send request with payload and signature
+
+    Note over Server: Server receives request
+    Server->>Server: Retrieve user's public IdentityKey
+    Server->>Server: Hash payload (excluding signature) using BLAKE2b
+    Server->>Server: Verify signature using public IdentityKey
+    alt Signature valid
+        Server->>Server: Accept and store one-time pre-keys
+    else Signature invalid
+        Server->>Client: Reject the request
+    end
+```
+
+
 ## Sending Messages
 
 ```mermaid
