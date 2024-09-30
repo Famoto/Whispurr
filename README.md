@@ -158,7 +158,7 @@ Enables mutual verification of identities and public keys, preventing impersonat
         Verifies the message signature using the sender's public signing key.
         Confirms the message has not been tampered with and is from the claimed sender.
 
-  **7. Secure Upload of One-Time Pre-Keys**
+**7. Secure Upload of One-Time Pre-Keys**
 
 - Client-Side:
         The client generates the request payload containing the new one-time pre-keys.  
