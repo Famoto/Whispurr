@@ -160,18 +160,18 @@ Enables mutual verification of identities and public keys, preventing impersonat
 
 **7. Secure Upload of One-Time Pre-Keys**
 
-- Client-Side:
-        The client generates the request payload containing the new one-time pre-keys.  
-        The payload is hashed using BLAKE2b.  
-        The client signs the hash with their private IdentityKey (Ed25519).  
-        The signature is included in the request body along with the one-time pre-keys.  
+**Client-Side:**
+- The client generates the request payload containing the new one-time pre-keys.
+- The payload is hashed using BLAKE2b.
+- The client signs the hash with their private IdentityKey (Ed25519).
+- The signature is included in the request body along with the one-time pre-keys.  
 
-    
-- Server-Side:
-    The server retrieves the public IdentityKey of the user.  
-    The server hashes the received request payload (excluding the signature).  
-    The signature is verified against the hash using the stored public IdentityKey.  
-    If the signature is valid, the new one-time pre-keys are accepted; if not, the request is rejected.  
+
+**Server-Side:**
+- The server retrieves the public IdentityKey of the user.
+- The server hashes the received request payload (excluding the signature).
+- The signature is verified against the hash using the stored public IdentityKey.
+- If the signature is valid, the new one-time pre-keys are accepted; if not, the request is rejected.  
 
 ## Privacy and Security Measures
 
