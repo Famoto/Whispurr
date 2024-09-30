@@ -32,7 +32,5 @@ Each user has different types of keys stored (e.g., identity, pre-key).
 | Column       | Type       | Description                                    |
 |--------------|------------|------------------------------------------------|
 | `UserID`     | BINARY(32) | Foreign key linking to the Users table (UserID).|
-| `ActiveKey`  | BINARY(32)       | Active public key.                             |
-| `NextKey`    | BINARY(32)       | Public key for future rotation.                 |
-| `RevokedKey` | BINARY(32)       | Revoked keys (optional).                       |
+| `Key`  | BINARY(32)       | Active public key.                             |
 | `Type`       | ENUM       | Key type (`identity`, `pre-key`, `signed_pre-key`). |
