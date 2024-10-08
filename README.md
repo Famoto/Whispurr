@@ -30,7 +30,7 @@ A E2E Messenger inspired by Signal
         Ed25519: Used for signing messages to verify the sender's identity and protect against tampering.  
 
 - Key Derivation
-        Argon2: Utilized where necessary for secure key derivation, adding resistance against brute-force attacks.  
+        HKDF-SHA256: Utilized where necessary for secure key derivation, adding resistance against brute-force attacks.  
 
 - Forward Secrecy and Post-Compromise Security
         Double Ratchet Algorithm: Works with X3DH to continuously update encryption keys, enhancing security over time.  
