@@ -1,4 +1,3 @@
-
 # Diagramms
 
 ## Initial Contact
@@ -146,7 +145,7 @@ sequenceDiagram
     Note over UserA,UserB: Both users now have a shared secret key (SK) and can proceed with Double Ratchet
 
 ```
-## Double Ratchet
+## DoubleRatchet
 
 ```mermaid
 sequenceDiagram
