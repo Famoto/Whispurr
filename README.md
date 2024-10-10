@@ -1,7 +1,6 @@
 # Whispurr
 A E2E Messenger inspired by Signal
 
-
 # Short Overview of the Secure Messenger Application
 ## Components
 
@@ -21,7 +20,7 @@ A E2E Messenger inspired by Signal
 	- Ensures uniqueness and binds the UserID to the user's public key, preventing impersonation.  
 
 - Key Agreement Protocol
-	- [X3DH](Diagrams.md#X3DH) (Extended Triple Diffie-Hellman): Establishes an initial shared secret between users for secure communication.  
+	- [X3DH](https://signal.org/docs/specifications/x3dh/) (Extended Triple Diffie-Hellman): Establishes an initial shared secret between users for secure communication.  
 
 - Message Encryption
 	- xChaCha20-Poly1305-IETF: Provides authenticated encryption with a nonce, ensuring confidentiality and integrity of messages.  
@@ -33,7 +32,7 @@ A E2E Messenger inspired by Signal
 	- HKDF-SHA256: Utilized where necessary for secure key derivation, adding resistance against brute-force attacks.  
 
 - Forward Secrecy and Post-Compromise Security
-	- [Double Ratchet Algorithm](Diagrams.md#DoubleRatchet): Works with X3DH to continuously update encryption keys, enhancing security over time.  
+	- [Double Ratchet Algorithm](https://signal.org/docs/specifications/doubleratchet/): Works with X3DH to continuously update encryption keys, enhancing security over time.  
 
 ## Key Management
 
