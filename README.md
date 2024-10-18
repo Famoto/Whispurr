@@ -1,5 +1,6 @@
 # Whispurr
-A E2E Messenger inspired by Signal
+A E2E Messenger inspired by Signal.
+The Goal is as **few Metadata as Possible** while keeping it simple
 
 # Short Overview of the Secure Messenger Application
 ## Components
@@ -15,6 +16,7 @@ A E2E Messenger inspired by Signal
 
 ## Cryptographic Components
 
+
 - UserIDs
 	- Derived by hashing the user's public signing key using BLAKE2b.  
 	- Ensures uniqueness and binds the UserID to the user's public key, preventing impersonation.  
@@ -23,7 +25,7 @@ A E2E Messenger inspired by Signal
 	- [X3DH](https://signal.org/docs/specifications/x3dh/) (Extended Triple Diffie-Hellman): Establishes an initial shared secret between users for secure communication.  
 
 - Message Encryption
-	- xChaCha20-Poly1305-IETF: Provides authenticated encryption with a nonce, ensuring confidentiality and integrity of messages.  
+	- xChaCha20-Poly1305: Provides authenticated encryption with a nonce, ensuring confidentiality and integrity of messages.  
 
 - Message Signing
 	- Ed25519: Used for signing messages to verify the sender's identity and protect against tampering.  
@@ -32,7 +34,10 @@ A E2E Messenger inspired by Signal
 	- HKDF-SHA256: Utilized where necessary for secure key derivation, adding resistance against brute-force attacks.  
 
 - Forward Secrecy and Post-Compromise Security
-	- [Double Ratchet Algorithm](https://signal.org/docs/specifications/doubleratchet/): Works with X3DH to continuously update encryption keys, enhancing security over time.  
+	- [Double Ratchet Algorithm](https://signal.org/docs/specifications/doubleratchet/): Works with X3DH to continuously update encryption keys, enhancing security over time. 
+
+- Padding
+	- ISO/IEC 7816-4 Padding Scheme
 
 ## Key Management
 
@@ -52,6 +57,9 @@ A E2E Messenger inspired by Signal
 - Fixed Message Sizes
 	- Messages are padded to a fixed length before encryption.  
 	- Mitigates metadata leakage by preventing attackers from inferring information based on message size.  
+
+- Rolling Window
+	- Only 
 
 - Out-of-Band Verification
 	- Users verify each other's public keys through trusted channels (e.g., in person, secure communication methods).  
@@ -108,24 +116,28 @@ A E2E Messenger inspired by Signal
     Encrypts the message using xChaCha20-Poly1305-IETF with the session key from the Double Ratchet.
     Signs the encrypted message with the sender's private Ed25519 signing key.
 
-- Compute Message Identifier
-    Calculates a hash of the receiver's UserID:
+- **Compute Message Identifier (MessageID)**
 
-- Send Message
-    Sends the encrypted and signed message to the server along with the MessageID.
+	- Calculates a hash of the combination of the sender's and receiver's UserIDs:
+	- This `MessageID` serves as the identifier for the conversation and is used for querying messages in that conversation.
+
+- **Send Message**
+    - Sends the encrypted and signed message to the server, along with the `MessageID` and the current `Hash` of the `EncryptedMessage` (to be stored in the hash chain).
 
 **Server Side**
 
-- Store and Relay Message
-    Stores the message indexed by the MessageID.
-    Does not access or modify the message content.
+- Stores the message along with the `MessageID`, `Hash`, and `PrevHash` in the HashChain Table.
+- Relays the message without accessing the content or knowing the sender and receiver identities.
 
 **5. Receiving Messages**
 
  **Receiving Client (Receiver)**
 
 - Compute Message Identifier
-	- Calculates the hash of their own UserID to retrieve messages:
+	- Calculates the `MessageID` by hashing the combination of their own `UserID` and the sender's `UserID`:
+
+- Request New Messages
+	- Sends the `MessageID` along with the latest known `Hash` (of the last message they received) to the server. The server uses this `PrevHash` to fetch all subsequent messages in the conversation.
 
 - Retrieve Messages
 	- Requests messages from the server using the MessageID.
@@ -178,7 +190,7 @@ A E2E Messenger inspired by Signal
 ## Server's Limited Role
 
 **Cannot Link Messages to Users**
-- Only sees hashes of UserIDs, preventing linkage of messages to specific individuals.
+- The server only sees `MessageIDs` (hashes of the `SenderUserID` and `ReceiverUserID`), preventing it from linking messages to specific users.
 
 **Zero Knowledge**
 - Stores only what is necessary: public keys and encrypted messages.
@@ -186,5 +198,5 @@ A E2E Messenger inspired by Signal
 - Cannot decrypt messages or link them to specific users.  
 
 **Message Identification**
-- Messages are indexed using hashes of the receiver's UserID.  
-- Preventing the server from learning who is communicating with whom.  
+- Messages are indexed using hashes of the `SenderUserID + ReceiverUserID`.
+- Clients send the latest message hash (`PrevHash`) to fetch new messages in order.
