@@ -1,48 +1,79 @@
-# Messages
-
-In a secure messaging protocol, messages transition through various states to establish and maintain secure communication between users. The primary message states are **Initial Messages** and **Common Messages**. Each state has distinct roles, cryptographic mechanisms, and security considerations essential for ensuring **confidentiality**, **integrity**, and **authenticity** of communications.
+This document outlines the secure messaging protocol, detailing the various message states, cryptographic mechanisms, and security considerations essential for ensuring **confidentiality**, **integrity**, and **authenticity** of communications between users.
 
 ---
 
-### **1. Initial Messages**
+## Table of Contents
+
+1. [Message States](#1-message-states)
+    - [1.1 Initial Messages](#11-initial-messages)
+        - [1.1.1 Functionality](#111-functionality)
+        - [1.1.2 Cryptographic Mechanisms](#112-cryptographic-mechanisms)
+        - [1.1.3 Message Structure](#113-message-structure)
+        - [1.1.4 MessageID Computation](#114-messageid-computation)
+        - [1.1.5 Security Considerations](#115-security-considerations)
+    - [1.2 Common Messages](#12-common-messages)
+        - [1.2.1 Functionality](#121-functionality)
+        - [1.2.2 Cryptographic Mechanisms](#122-cryptographic-mechanisms)
+        - [1.2.3 Message Structure](#123-message-structure)
+        - [1.2.4 MessageID Computation](#124-messageid-computation)
+        - [1.2.5 Security Considerations](#125-security-considerations)
+    - [1.3 Group Chats](#13-group-chats)
+        - [1.3.1 Functionality](#131-functionality)
+        - [1.3.2 Cryptographic Mechanisms](#132-cryptographic-mechanisms)
+        - [1.3.3 Message Structure](#133-message-structure)
+        - [1.3.4 MessageID Computation](#134-messageid-computation)
+        - [1.3.5 Validation Messages](#135-validation-messages)
+        - [1.3.6 Security Considerations](#136-security-considerations)
+    - [1.4 Encryption and Component Placement](#14-encryption-and-component-placement)
+2. [MessageID](#2-messageid)
+    - [2.1 Purpose](#21-purpose)
+    - [2.2 UserIDs](#22-userids)
+        - [2.2.1 Generation](#221-generation)
+        - [2.2.2 Purpose](#222-purpose)
+    - [2.3 Message ID Creation](#23-message-id-creation)
+        - [2.3.1 Initial Messages](#231-initial-messages)
+        - [2.3.2 Common Messages](#232-common-messages)
+3. [Summary of Message States](#3-summary-of-message-states)
+
+---
+
+## 1. Message States
+
+Messages in the protocol transition through distinct states to establish and maintain secure communication. The primary states include **Initial Messages**, **Common Messages**, and **Group Chats**. Each state employs specific cryptographic mechanisms and adheres to security protocols to ensure robust communication.
+
+### 1.1 Initial Messages
 
 **Purpose:**  
-Initial Messages are foundational for establishing a secure conversation between two users. They initiate the connection, exchange essential cryptographic information, and set up a secure session for future communications.
+Establish a secure conversation between two users by initiating the connection, exchanging essential cryptographic information, and setting up a secure session for future communications.
 
----
-
-#### **1.1 Functionality**
+#### 1.1.1 Functionality
 
 - **Initiate Communication:**  
-    Establishes the first connection between the sender and the recipient.
+    Establish the initial connection between sender and recipient.
     
 - **Exchange Essential Information:**  
-    Transmits the sender's **UserID** and necessary **public keys** to the recipient.
+    Transmit the sender's **UserID** and necessary **public keys**.
     
 - **Set Up Secure Session:**  
-    Facilitates the creation of **shared secrets** for encrypting subsequent messages.
+    Create **shared secrets** for encrypting subsequent messages.
     
 
----
-
-#### **1.2 Cryptographic Mechanisms**
+#### 1.1.2 Cryptographic Mechanisms
 
 - **Encryption:**
     
     - **Public Key Encryption:**  
-        Messages are encrypted using the recipient's **public keys**, ensuring that only the intended recipient can decrypt and read them.
+        Encrypt messages with the recipient's **public keys** to ensure only the intended recipient can decrypt them.
         
     - **Encrypted UserID:**  
-        The sender's **UserID** is included in the payload, encrypted to maintain confidentiality and allow recipient verification without exposing the UserID to unauthorized parties.
+        Encrypt the sender's **UserID** within the payload to maintain confidentiality and allow verification without exposure.
         
 - **Signature:**
     
     - **Ed25519 Signature:**  
-        Ensures **authenticity** and **integrity** by allowing the recipient to verify the message originated from the legitimate sender.
+        Provides **authenticity** and **integrity** by enabling the recipient to verify the sender's legitimacy.
 
----
-
-#### **1.3 Message Structure**
+#### 1.1.3 Message Structure
 
 - **Header (Unencrypted):**
     
@@ -50,219 +81,372 @@ Initial Messages are foundational for establishing a secure conversation between
         A unique value required for decryption.
         
     - **Sender's Ratchet Public Key:**  
-        Essential for establishing the **Double Ratchet** state once the session begins.
+        Facilitates the **Double Ratchet** state establishment.
         
 - **Body (Encrypted):**
     
     - **Ciphertext:**  
-        Contains the encrypted sender's **UserID** and any necessary padding.
+        Contains the encrypted sender's **UserID** and necessary padding.
 - **Signature (Unencrypted):**
     
     - **Ed25519 Signature:**  
-        Covers both the header and body to verify authenticity and integrity.
+        Covers both header and body to verify authenticity and integrity.
 
----
-
-#### **1.4 MessageID Computation**
+#### 1.1.4 MessageID Computation
 
 - **Hashed Recipient UserID:**  
-    The `MessageID` is derived by hashing the recipient's **UserID**, ensuring that the recipient doesn't need to be aware of the sender's **UserID** during the initial exchange, thereby preserving the sender's anonymity until decryption.
+    `MessageID = Hash(RecipientUserID)`  
+    Ensures the sender's anonymity until decryption by the recipient.
 
----
+#### 1.1.5 Security Considerations
 
-#### **1.5 Security Considerations**
-
-- **Security:**  
-    Encryption of the sender's **UserID** and use of recipient's public keys prevent unauthorized interception or tampering.
+- **Confidentiality:**  
+    Encryption of the sender's **UserID** and use of recipient's public keys prevent unauthorized access.
     
 - **Privacy:**  
-    Protects the sender's identity until successful decryption by the recipient.
+    Protects the sender's identity until the recipient decrypts the message.
     
 - **Integrity:**  
-    Digital signatures prevent message alteration and impersonation attacks.
+    Digital signatures prevent message alteration and impersonation.
     
 
----
-
-### **2. Common Messages**
+### 1.2 Common Messages
 
 **Purpose:**  
-After establishing the initial connection, Common Messages handle the ongoing exchange of information. They employ advanced cryptographic protocols to ensure continuous security, including **forward secrecy** and **post-compromise security**.
+Manage the ongoing exchange of information within an established secure session, ensuring continuous security through mechanisms like **forward secrecy** and **post-compromise security**.
 
----
-
-#### **2.1 Functionality**
+#### 1.2.1 Functionality
 
 - **Transmit Regular Communication:**  
-    Enables sending and receiving of standard messages within an established secure session.
+    Send and receive standard messages within a secure session.
     
 - **Maintain Security State:**  
-    Continuously updates cryptographic keys to protect against potential compromises.
+    Continuously update cryptographic keys to mitigate potential compromises.
     
 - **Ensure Message Authenticity and Integrity:**  
-    Guarantees that messages originate from legitimate senders and remain unaltered during transit.
+    Verify that messages originate from legitimate senders and remain unaltered.
     
 
----
-
-#### **2.2 Cryptographic Mechanisms**
+#### 1.2.2 Cryptographic Mechanisms
 
 - **Key Agreement and Management:**
     
     - **X3DH (Extended Triple Diffie-Hellman):**  
-        Utilized during initial setup to establish a shared secret.
+        Establishes a shared secret during initial setup.
         
     - **Double Ratchet Algorithm:**  
-        Manages continuous key updates with each message sent and received, ensuring each message uses a unique key derived from the previous one.
+        Manages continuous key updates, ensuring each message uses a unique derived key.
         
 - **Encryption:**
     
     - **xChaCha20-Poly1305-IETF:**  
-        Employed for **authenticated encryption**, ensuring both confidentiality and integrity of the message payload.
+        Provides **authenticated encryption** for confidentiality and integrity.
         
     - **Message Padding:**  
-        Uses **ISO/IEC 7816-4 padding** to maintain fixed message sizes, preventing metadata leakage based on message length.
+        Implements **ISO/IEC 7816-4 padding** to maintain fixed message sizes, preventing metadata leakage.
         
 - **Signature:**
     
     - **Ed25519 Signature:**  
-        Verifies authenticity and integrity, allowing recipients to confirm the sender's identity and ensure the message hasn't been tampered with.
+        Verifies authenticity and integrity, confirming the sender's identity and message integrity.
 
----
-
-#### **2.3 Message Structure**
+#### 1.2.3 Message Structure
 
 - **Header (Unencrypted):**
     
     - **Nonce (24 bytes):**  
-        Unique per message to ensure secure encryption.
+        Unique per message for secure encryption.
         
     - **Sender's Ratchet Public Key:**  
-        Updated as part of the Double Ratchet process to facilitate key agreement.
+        Updated as part of the Double Ratchet process for key agreement.
         
 - **Body (Encrypted):**
     
     - **Ciphertext:**  
-        Contains the encrypted message payload along with padding.
+        Contains the encrypted message payload and padding.
 - **Signature (Unencrypted):**
     
     - **Ed25519 Signature:**  
-        Covers both the header and body for authenticity and integrity verification.
+        Covers both header and body for verification.
 
----
-
-#### **2.4 MessageID Computation**
+#### 1.2.4 MessageID Computation
 
 - **Hashed Combination of UserIDs:**  
-    The `MessageID` is computed by hashing both the sender's and recipient's **UserID's**, ensuring uniqueness to the conversation without revealing individual UserID's. `MessageID = Hash(SenderID || RecipientID)` This means that for each of the Participants the MessageID for Sending is different, Increasing the Difficulty of Matching Conversations to users while making it easy to track who sent what in the Conversation.
+    `MessageID = Hash(SenderUserID || RecipientUserID)`  
+    Ensures conversation uniqueness without revealing individual UserIDs, enhancing privacy and making correlation difficult.
 
----
-
-#### **2.5 Security Considerations**
+#### 1.2.5 Security Considerations
 
 - **Forward Secrecy:**  
-    Frequent encryption key updates ensure that the compromise of a single key doesn't affect past or future messages.
+    Regular key updates prevent compromise of past or future messages.
     
 - **Post-Compromise Security:**  
-    Continuous key updates prevent attackers from decrypting messages beyond the point of compromise, even if a key is compromised.
+    Continuous key updates restrict attackers from decrypting messages beyond the point of compromise.
     
 - **Efficiency and Security:**  
-    Utilizes established cryptographic primitives like **xChaCha20-Poly1305** and **Ed25519** to provide robust security while maintaining performance suitable for real-time communication.
+    Utilizes robust cryptographic primitives like **xChaCha20-Poly1305** and **Ed25519** for high security and performance.
     
 - **Integrity and Authenticity:**  
-    Digital signatures maintain trust by ensuring messages are genuine and unaltered.
+    Digital signatures ensure messages are genuine and unaltered.
     
+
+### 1.3 Group Chats
+
+**Purpose:**  
+Enable secure multi-party communication, ensuring all participants receive identical messages and maintaining conversation integrity against malicious actors.
+
+#### 1.3.1 Functionality
+
+- **Facilitate Multi-Party Communication:**  
+    Allow multiple users to engage in a single, secure conversation seamlessly.
+    
+- **Ensure Message Consistency:**  
+    Guarantee uniform message content across all group members, preventing selective tampering.
+    
+- **Validate Message Authenticity and Integrity:**  
+    Utilize Central Validation Messages to verify consistency and legitimacy of messages.
+    
+- **Manage Group Membership:**  
+    Handle addition and removal of members while maintaining the conversation's security state.
+    
+
+#### 1.3.2 Cryptographic Mechanisms
+
+- **Central Validation Messages:**
+    
+    - **Group Commitment:**  
+        Cryptographically binds message content to group members.
+        
+    - **Digital Signatures:**  
+        Ed25519 signatures validate the authenticity and integrity of Central Validation Messages.
+        
+- **Encryption:**
+    
+    - **xChaCha20-Poly1305-IETF:**  
+        Ensures authenticated encryption of messages.
+- **Key Agreement and Management:**
+    
+    - **Double Ratchet Algorithm:**  
+        Extended to support multiple recipients with continuous key updates.
+- **Hash Functions:**
+    
+    - **BLAKE2b:**  
+        Used for hashing UserIDs and creating message hashes within Central Validation Messages.
+
+#### 1.3.3 Message Structure
+
+- **Central Validation Message (Unencrypted):**
+    - **GroupCommitment:**  
+        `Hash(UserID1 || UserID2 || ... || UserIDn || Hash(Message))`
+        
+    - **Signature:**  
+        `Ed25519_Signature(GroupCommitment || MessageHash)`
+        
+
+#### 1.3.4 MessageID Computation
+
+- **Hashed Combination of UserIDs:**  
+    `MessageID = Hash(GroupMemberUserIDs)`  
+    Ensures uniqueness to the group conversation without revealing individual UserIDs.
+
+#### 1.3.5 Validation Messages
+
+**Purpose:**  
+Ensure all recipients receive identical data, maintaining message consistency and preventing malicious actors from distributing disparate messages.
+
+**Components:**
+
+- **Group Commitment:**  
+    Binds the message content to all group members.
+    
+- **Message Hash:**  
+    Represents the integrity of the message content.
+    
+- **Sender's Signature:**  
+    Verifies the authenticity of the Group Commitment and Message Hash.
+    
+
+**Validation Process:**
+
+1. **Creation:**
+    - Compute `MessageHash = Hash(Message)`
+    - Compute `GroupCommitment = Hash(UserID1 || UserID2 || ... || UserIDn || MessageHash)`
+    - Generate `Signature = Ed25519_Sign(sender_private_key, GroupCommitment || MessageHash)`
+    - Assemble:
+	```
+	{
+	"CentralValidationMessage": {
+	"GroupCommitment": "GroupCommitment",
+	"MessageHash": "MessageHash",
+	"Signature": "Signature"
+	}
+	}
+	```
+2. **Distribution:**
+    - Encrypt message for each recipient: `EncryptedMessage_recipient = xChaCha20-Poly1305-IETF(Message, Nonce, GroupCommitment)`
+    - Transmit encrypted messages alongside the Central Validation Message to all group members.
+    
+3. **Verification by Recipients:**
+    - Decrypt the message: `DecryptedMessage = Decrypt(xChaCha20-Poly1305-IETF, EncryptedMessage_recipient, Nonce, GroupCommitment)`
+    - Recompute Group Commitment: `RecomputedGroupCommitment = Hash(UserID1 || UserID2 || ... || UserIDn || Hash(DecryptedMessage))`
+    - Compare Commitments: Reject if `RecomputedGroupCommitment != CentralValidationMessage.GroupCommitment`
+    - Verify Signature: Ensure `Ed25519_Verify(sender_public_key, GroupCommitment || MessageHash, Signature)` is valid.
+    - Optional: Cross-recipient exchange of `MessageHash` through a secure channel for consistency.
+
+#### 1.3.6 Security Considerations
+
+- **Consistency and Integrity:**
+    
+    - Central Validation Messages ensure uniformity across all recipients.
+    - Digital signatures prevent unauthorized alterations and verify authenticity.
+- **Preventing Selective Tampering:**
+    
+    - Group Commitment binds messages to all group members, making selective alterations detectable.
+    - Consistent encryption parameters enforce uniform encryption across the group.
+- **Privacy Preservation:**
+    
+    - Hashed UserIDs protect individual identities within MessageIDs and Group Commitments.
+    - Minimal metadata exposure avoids leakage of sensitive information.
+- **Resistance to Traffic Analysis:**
+    
+    - Unique MessageIDs for groups differentiate them from one-on-one chats, hindering message flow correlation.
+- **Post-Compromise Security:**
+    
+    - Continuous key updates via the Double Ratchet ensure past and future messages remain secure even if a key is compromised.
+
+### 1.4 Encryption and Component Placement
+
+**Encrypted Components:**
+
+- **Message Payload:**
+    - **Description:** Core content requiring confidentiality.
+    - **Includes:** Message data and necessary padding.
+
+**Unencrypted Components:**
+
+- **Nonce:**
+    - **Description:** Unique value for decryption.
+    - **Reason:** Required to initialize the cipher; cannot be encrypted.
+    - 
+- **Sender's Ratchet Public Key:**
+    - **Description:** Facilitates key agreement in the Double Ratchet algorithm.
+    - **Reason:** Must be in plaintext for immediate use by the recipient.
+    - 
+- **Signature:**
+    - **Description:** Verifies message authenticity and integrity.
+    - **Reason:** Allows verification before decryption, ensuring legitimacy and preventing tampering.
 
 ---
 
-### **Summary of Message States**
+## 2. MessageID
+
+### 2.1 Purpose
+
+- **Unique Identification:**  
+    Uniquely identifies conversations between users without revealing actual UserIDs to the server.
+    
+- **Metadata Minimization:**  
+    Uses hashed UserID combinations to prevent the server from linking messages to specific users or conversations.
+    
+- **Anonymity Preservation:**  
+    Maintains sender anonymity during initial communication until decryption by the recipient.
+    
+
+### 2.2 UserIDs
+
+#### 2.2.1 Generation
+
+- **UserID Creation:**  
+    Derived by hashing the user's **Ed25519 public signing key** using a cryptographic hash function like **BLAKE2b**.
+    
+    - **Formula:**  
+        `UserID = Hash(PublicSigningKey)`
+
+#### 2.2.2 Purpose
+
+- **Uniqueness:**  
+    Ensures each user has a distinct identifier tied to their cryptographic identity.
+    
+- **Binding to Public Key:**  
+    Links the UserID to the user's public key, preventing impersonation.
+    
+- **Anonymity:**  
+    Hashed identifiers do not disclose personal information.
+    
+
+### 2.3 Message ID Creation
+
+#### 2.3.1 Initial Messages
+
+**Scenario:**  
+Sender initiates communication with a recipient for the first time.
+
+- **Computation:**  
+    `MessageID = Hash(RecipientUserID)`
+    
+- **Rationale:**
+    
+    - **Anonymity for Sender:**  
+        Uses only the recipient's UserID, hiding the sender's identity from the server and interceptors until decryption.
+        
+    - **Simplified Retrieval:**  
+        Recipient retrieves messages by hashing their UserID and accessing the corresponding MessageID.
+        
+- **Security Benefits:**
+    
+    - **Privacy:**  
+        Protects sender identity during initial exchange.
+        
+    - **Security:**  
+        Prevents unauthorized linking of messages to specific users.
+        
+
+#### 2.3.2 Common Messages
+
+**Scenario:**  
+Communication after establishing a secure session.
+
+- **Computation:**  
+    `MessageID = Hash(SenderUserID || RecipientUserID)`
+    
+- **Asymmetry:**
+    
+    - **Sender:**  
+        Uses `Hash(SenderUserID || RecipientUserID)`
+        
+    - **Recipient:**  
+        Uses `Hash(RecipientUserID || SenderUserID)`
+        
+- **Rationale:**
+    
+    - **Uniqueness:**  
+        Ensures MessageID is unique to the specific conversation.
+        
+    - **Privacy Enhancement:**  
+        Different MessageIDs for sender and recipient orders obscure user relationships.
+        
+    - **Correlation Difficulty:**  
+        Obscures message flow associations, enhancing privacy.
+        
+- **Security Benefits:**
+    
+    - **Metadata Minimization:**  
+        Server cannot determine sender or recipient identities from MessageID.
+        
+    - **Traffic Analysis Resistance:**  
+        Different MessageIDs prevent message flow correlation.
+        
+
+---
+
+## 3. Summary of Message States
 
 |**Message State**|**Purpose**|**Encryption**|**Key Mechanism**|**Signature**|
 |---|---|---|---|---|
 |**Initial**|Initiate secure communication|Encrypted with recipient's public keys|Establish shared secret via X3DH|Ed25519 signature over header and body|
 |**Common**|Ongoing secure communication|Encrypted with session keys from Double Ratchet|Continuous key updates via Double Ratchet|Ed25519 signature over header and body|
+|**Group**|Multi-party secure communication|Encrypted with group session keys|Extended Double Ratchet for groups|Ed25519 signature on Central Validation Message|
 
 ---
 
-# MessageID
-## **1. Purpose of Message ID**
-
-- **Unique Identification:** The Message ID uniquely identifies a conversation between two users without revealing their actual UserIDs to the server.
-- **Metadata Minimization:** By using hashed combinations of UserIDs, the protocol ensures that the server cannot link messages to specific users or conversations based on Message IDs alone.
-- **Anonymity Preservation:** Particularly during initial communication, the Message ID helps in preserving the sender's anonymity until the recipient decrypts the message.
-
----
-
-## **2. UserIDs and Their Role**
-
-- **UserID Generation:**
-    - Each user's **UserID** is derived by hashing their **public signing key** (Ed25519 public key) using a cryptographic hash function like **BLAKE2b**.
-    - **Formula:** `UserID = Hash(PublicSigningKey)`
-- **Purpose of UserIDs:**
-    - **Uniqueness:** Ensures that each user has a unique identifier tied to their cryptographic identity.
-    - **Binding to Public Key:** Binds the UserID to the user's public key, preventing impersonation attacks.
-    - **Anonymity:** Since UserIDs are hashes, they do not reveal any personal information about the user.
-
----
-
-## **3. Message ID Creation**
-
-### **3.1 Initial Messages**
-
-**Scenario:** When a sender initiates communication with a recipient for the first time.
-
-- **Computation:**
-    - The Message ID is computed by hashing the **recipient's UserID**.
-    - **Formula:** `MessageID = Hash(RecipientUserID)`
-- **Reasoning:**
-    - **Anonymity for Sender:** By using only the recipient's UserID, the sender's identity remains hidden from the server and any potential interceptors until the recipient decrypts the message.
-    - **Simplified Retrieval:** The recipient can easily retrieve messages intended for them by hashing their own UserID and requesting messages associated with that Message ID.
-- **Security Considerations:**
-    - **Privacy:** Protects the sender's identity during the initial message exchange.
-    - **Security:** Prevents unauthorized entities from linking messages to specific senders or recipients.
-
-### **3.2 Common Messages**
-
-**Scenario:** After the initial secure session has been established between the sender and the recipient.
-
-- **Computation:**
-    - The Message ID is computed by hashing the combination of the **sender's UserID** and the **recipient's UserID**.
-    - **Formula:** `MessageID = Hash(SenderUserID + RecipientUserID)`
-- **Asymmetry in Message IDs:**
-    - **Sender's Perspective:** Uses `MessageID = Hash(SenderUserID + RecipientUserID)` when sending messages.
-    - **Recipient's Perspective:** Uses `MessageID = Hash(RecipientUserID + SenderUserID)` when retrieving messages.
-- **Reasoning:**
-    - **Uniqueness:** Ensures the Message ID is unique to the specific conversation between two users.
-    - **Privacy Enhancement:** Since the order of UserIDs affects the hash, the Message IDs used by the sender and recipient are different. This asymmetry makes it difficult for an observer or the server to correlate messages between users.
-    - **Difficult to Correlate:** Increases the difficulty of matching conversations to users, thereby enhancing privacy.
-- **Security Considerations:**
-    - **Metadata Minimization:** The server cannot determine the identities of the sender or recipient from the Message ID.
-    - **Resistance to Traffic Analysis:** Different Message IDs for sender and recipient hinder correlation of message flows.
-    - 
-----
-# Encryption and Placement of Message Components
-
-Understanding which components are encrypted and which remain unencrypted is crucial for maintaining the protocol's security properties.
-
-#### **Encrypted Components**
-
-- **Message Payload:**
-    - **Description:** The core content that must remain confidential.
-    - **Includes:** Any padding to maintain a fixed message size.
-
-#### **Unencrypted Components**
-
-- **Nonce:**
-    
-    - **Description:** Required for decryption; must be unique for each message.
-    - **Reason:** Cannot be encrypted as it's needed to initialize the cipher.
-- **Sender's Ratchet Public Key:**
-    
-    - **Description:** Essential for the recipient to compute the new shared secret in the Double Ratchet algorithm.
-    - **Reason:** Must be sent in plaintext to be immediately usable by the recipient.
-- **Signature:**
-    
-    - **Description:** Verifies the authenticity and integrity of the message.
-    - **Reason:** Sent unencrypted to allow the recipient to verify the message before attempting decryption, ensuring it originates from a legitimate sender and hasn't been tampered with.
-
----
+This specification ensures a robust and secure messaging protocol by meticulously defining message states, cryptographic practices, and security measures. The protocol emphasizes user privacy, message integrity, and resistance to various security threats, making it suitable for secure, real-time communication.
