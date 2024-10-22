@@ -134,6 +134,7 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 ### 3. Establishing Secure Communication
 
 **Initiating Client (Sender):**
+	More information about Messages [here](Messages.md)
 
 - **Retrieve Receiver's Public Keys:**
     - Obtain receiver's public keys from the server using their UserID.
