@@ -296,22 +296,21 @@ Ensure all recipients receive identical data, maintaining message consistency an
 #### 1.3.6 Security Considerations
 
 - **Consistency and Integrity:**
-    
     - Central Validation Messages ensure uniformity across all recipients.
     - Digital signatures prevent unauthorized alterations and verify authenticity.
-- **Preventing Selective Tampering:**
     
+- **Preventing Selective Tampering:**
     - Group Commitment binds messages to all group members, making selective alterations detectable.
     - Consistent encryption parameters enforce uniform encryption across the group.
+
 - **Privacy Preservation:**
-    
     - Hashed UserIDs protect individual identities within MessageIDs and Group Commitments.
     - Minimal metadata exposure avoids leakage of sensitive information.
+    
 - **Resistance to Traffic Analysis:**
-    
     - Unique MessageIDs for groups differentiate them from one-on-one chats, hindering message flow correlation.
-- **Post-Compromise Security:**
     
+- **Post-Compromise Security:**
     - Continuous key updates via the Double Ratchet ensure past and future messages remain secure even if a key is compromised.
 
 ### 1.4 Encryption and Component Placement
