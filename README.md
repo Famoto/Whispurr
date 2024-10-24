@@ -1,25 +1,30 @@
 # Whispurr: A Minimal Metadata Secure Messenger
 
 Whispurr is an end-to-end encrypted messenger inspired by Signal, designed to minimize metadata while maintaining simplicity and robust security.
-
 ## Table of Contents
 
-1. [Overview](#overview)
-2. [Components](#components)
-    - [Client Application](#client-application)
-    - [Server](#server)
-3. [Cryptographic Components](#cryptographic-components)
-4. [Key Management](#key-management)
-5. [Privacy Measures](#privacy-measures)
-6. [Data Flow](#data-flow)
-    - [1. User Registration and Key Generation](#1-user-registration-and-key-generation)
-    - [2. Out-of-Band UserID and Public Key Exchange](#2-out-of-band-userid-and-public-key-exchange)
-    - [3. Establishing Secure Communication](#3-establishing-secure-communication)
-    - [4. Receiving Messages](#4-receiving-messages)
-    - [5. Message Signing and Verification](#5-message-signing-and-verification)
-    - [6. Secure Upload of One-Time Pre-Keys](#6-secure-upload-of-one-time-pre-keys)
-7. [Cryptographic Security Measures](#cryptographic-security-measures)
-8. [Server's Limited Role](#servers-limited-role)
+- [[#Table of Contents|Table of Contents]]
+- [[#Overview|Overview]]
+- [[#Components|Components]]
+	- [[#Components#Client Application|Client Application]]
+	- [[#Components#Server|Server]]
+- [[#Cryptographic Components|Cryptographic Components]]
+- [[#Key Management|Key Management]]
+	- [[#Key Management#Key Types|Key Types]]
+- [[#Privacy Measures|Privacy Measures]]
+	- [[#Privacy Measures#Fixed Message Sizes|Fixed Message Sizes]]
+	- [[#Privacy Measures#Rolling Window|Rolling Window]]
+	- [[#Privacy Measures#Out-of-Band Verification|Out-of-Band Verification]]
+- [[#Data Flow|Data Flow]]
+	- [[#Data Flow#1. User Registration and Key Generation|1. User Registration and Key Generation]]
+	- [[#Data Flow#2. Out-of-Band UserID and Public Key Exchange|2. Out-of-Band UserID and Public Key Exchange]]
+	- [[#Data Flow#3. Establishing Secure Communication|3. Establishing Secure Communication]]
+	- [[#Data Flow#4. Receiving Messages|4. Receiving Messages]]
+	- [[#Data Flow#5. Message Signing and Verification|5. Message Signing and Verification]]
+	- [[#Data Flow#6. Secure Upload of One-Time Pre-Keys|6. Secure Upload of One-Time Pre-Keys]]
+- [[#Cryptographic Security Measures|Cryptographic Security Measures]]
+- [[#Server's Limited Role|Server's Limited Role]]
+
 
 ---
 
