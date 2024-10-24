@@ -3,37 +3,36 @@ This document outlines the secure messaging protocol, detailing the various mess
 ---
 ## Table of Contents
 
-- [[#Table of Contents|Table of Contents]]
-- [[#1. Message States|1. Message States]]
-	- [[#1. Message States#1.1 Initial Messages|1.1 Initial Messages]]
-		- [[#1.1 Initial Messages#1.1.1 Functionality|1.1.1 Functionality]]
-		- [[#1.1 Initial Messages#1.1.2 Cryptographic Mechanisms|1.1.2 Cryptographic Mechanisms]]
-		- [[#1.1 Initial Messages#1.1.3 Message Structure|1.1.3 Message Structure]]
-		- [[#1.1 Initial Messages#1.1.4 MessageID Computation|1.1.4 MessageID Computation]]
-		- [[#1.1 Initial Messages#1.1.5 Security Considerations|1.1.5 Security Considerations]]
-	- [[#1. Message States#1.2 Common Messages|1.2 Common Messages]]
-		- [[#1.2 Common Messages#1.2.1 Functionality|1.2.1 Functionality]]
-		- [[#1.2 Common Messages#1.2.2 Cryptographic Mechanisms|1.2.2 Cryptographic Mechanisms]]
-		- [[#1.2 Common Messages#1.2.3 Message Structure|1.2.3 Message Structure]]
-		- [[#1.2 Common Messages#1.2.4 MessageID Computation|1.2.4 MessageID Computation]]
-		- [[#1.2 Common Messages#1.2.5 Security Considerations|1.2.5 Security Considerations]]
-	- [[#1. Message States#1.3 Group Chats|1.3 Group Chats]]
-		- [[#1.3 Group Chats#1.3.1 Functionality|1.3.1 Functionality]]
-		- [[#1.3 Group Chats#1.3.2 Cryptographic Mechanisms|1.3.2 Cryptographic Mechanisms]]
-		- [[#1.3 Group Chats#1.3.3 Message Structure|1.3.3 Message Structure]]
-		- [[#1.3 Group Chats#1.3.4 MessageID Computation|1.3.4 MessageID Computation]]
-		- [[#1.3 Group Chats#1.3.5 Validation Messages|1.3.5 Validation Messages]]
-		- [[#1.3 Group Chats#1.3.6 Security Considerations|1.3.6 Security Considerations]]
-	- [[#1. Message States#1.4 Encryption and Component Placement|1.4 Encryption and Component Placement]]
-- [[#2. MessageID|2. MessageID]]
-	- [[#2. MessageID#2.1 Purpose|2.1 Purpose]]
-	- [[#2. MessageID#2.2 UserIDs|2.2 UserIDs]]
-		- [[#2.2 UserIDs#2.2.1 Generation|2.2.1 Generation]]
-		- [[#2.2 UserIDs#2.2.2 Purpose|2.2.2 Purpose]]
-	- [[#2. MessageID#2.3 Message ID Creation|2.3 Message ID Creation]]
-		- [[#2.3 Message ID Creation#2.3.1 Initial Messages|2.3.1 Initial Messages]]
-		- [[#2.3 Message ID Creation#2.3.2 Common Messages|2.3.2 Common Messages]]
-- [[#3. Summary of Message States|3. Summary of Message States]]
+1. [1. Message States](#1-message-states)
+	1. [1.1 Initial Messages](#11-initial-messages)
+		1. [1.1.1 Functionality](#111-functionality)
+		1. [1.1.2 Cryptographic Mechanisms](#112-cryptographic-mechanisms)
+		1. [1.1.3 Message Structure](#113-message-structure)
+		1. [1.1.4 MessageID Computation](#114-messageid-computation)
+		1. [1.1.5 Security Considerations](#115-security-considerations)
+	1. [1.2 Common Messages](#12-common-messages)
+		1. [1.2.1 Functionality](#121-functionality)
+		1. [1.2.2 Cryptographic Mechanisms](#122-cryptographic-mechanisms)
+		1. [1.2.3 Message Structure](#123-message-structure)
+		1. [1.2.4 MessageID Computation](#124-messageid-computation)
+		1. [1.2.5 Security Considerations](#125-security-considerations)
+	1. [1.3 Group Chats](#13-group-chats)
+		1. [1.3.1 Functionality](#131-functionality)
+		1. [1.3.2 Cryptographic Mechanisms](#132-cryptographic-mechanisms)
+		1. [1.3.3 Message Structure](#133-message-structure)
+		1. [1.3.4 MessageID Computation](#134-messageid-computation)
+		1. [1.3.5 Validation Messages](#135-validation-messages)
+		1. [1.3.6 Security Considerations](#136-security-considerations)
+	1. [1.4 Encryption and Component Placement](#14-encryption-and-component-placement)
+1. [2. MessageID](#2-messageid)
+	1. [2.1 Purpose](#21-purpose)
+	1. [2.2 UserIDs](#22-userids)
+		1. [2.2.1 Generation](#221-generation)
+		1. [2.2.2 Purpose](#222-purpose)
+	1. [2.3 Message ID Creation](#23-message-id-creation)
+		1. [2.3.1 Initial Messages](#231-initial-messages)
+		1. [2.3.2 Common Messages](#232-common-messages)
+1. [3. Summary of Message States](#3-summary-of-message-states)
 
 ---
 

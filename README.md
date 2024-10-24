@@ -3,27 +3,27 @@
 Whispurr is an end-to-end encrypted messenger inspired by Signal, designed to minimize metadata while maintaining simplicity and robust security.
 ## Table of Contents
 
-- [[#Table of Contents|Table of Contents]]
-- [[#Overview|Overview]]
-- [[#Components|Components]]
-	- [[#Components#Client Application|Client Application]]
-	- [[#Components#Server|Server]]
-- [[#Cryptographic Components|Cryptographic Components]]
-- [[#Key Management|Key Management]]
-	- [[#Key Management#Key Types|Key Types]]
-- [[#Privacy Measures|Privacy Measures]]
-	- [[#Privacy Measures#Fixed Message Sizes|Fixed Message Sizes]]
-	- [[#Privacy Measures#Rolling Window|Rolling Window]]
-	- [[#Privacy Measures#Out-of-Band Verification|Out-of-Band Verification]]
-- [[#Data Flow|Data Flow]]
-	- [[#Data Flow#1. User Registration and Key Generation|1. User Registration and Key Generation]]
-	- [[#Data Flow#2. Out-of-Band UserID and Public Key Exchange|2. Out-of-Band UserID and Public Key Exchange]]
-	- [[#Data Flow#3. Establishing Secure Communication|3. Establishing Secure Communication]]
-	- [[#Data Flow#4. Receiving Messages|4. Receiving Messages]]
-	- [[#Data Flow#5. Message Signing and Verification|5. Message Signing and Verification]]
-	- [[#Data Flow#6. Secure Upload of One-Time Pre-Keys|6. Secure Upload of One-Time Pre-Keys]]
-- [[#Cryptographic Security Measures|Cryptographic Security Measures]]
-- [[#Server's Limited Role|Server's Limited Role]]
+1. [Overview](#overview)
+1. [Components](#components)
+	1. [Client Application](#client-application)
+	1. [Server](#server)
+1. [Cryptographic Components](#cryptographic-components)
+1. [Key Management](#key-management)
+	1. [Key Types](#key-types)
+1. [Privacy Measures](#privacy-measures)
+	1. [Fixed Message Sizes](#fixed-message-sizes)
+	1. [Rolling Window](#rolling-window)
+	1. [Out-of-Band Verification](#out-of-band-verification)
+1. [Data Flow](#data-flow)
+	1. [1. User Registration and Key Generation](#1-user-registration-and-key-generation)
+	1. [2. Out-of-Band UserID and Public Key Exchange](#2-out-of-band-userid-and-public-key-exchange)
+	1. [3. Establishing Secure Communication](#3-establishing-secure-communication)
+	1. [4. Receiving Messages](#4-receiving-messages)
+	1. [5. Message Signing and Verification](#5-message-signing-and-verification)
+	1. [6. Secure Upload of One-Time Pre-Keys](#6-secure-upload-of-one-time-pre-keys)
+1. [Cryptographic Security Measures](#cryptographic-security-measures)
+1. [Server's Limited Role](#servers-limited-role)
+
 
 
 ---
@@ -74,15 +74,15 @@ Whispurr aims to provide secure, end-to-end encrypted messaging with minimal met
 
 ### Key Types
 
-|**Key Type**|**Algorithm**|**Purpose**|**Usage in Protocol**|
-|---|---|---|---|
-|**Identity Key Pairs (IK)**||||
-|IK_ed25519_priv / IK_ed25519_pub|Ed25519|Long-term identity and signing|Message Signing, SPK Signing|
-|IK_x25519_priv / IK_x25519_pub|X25519|Long-term identity and key agreement|X3DH Key Agreement|
-|**Signed Prekey Pair (SPK)**||||
-|SPK_priv / SPK_pub|X25519|Signed prekeys for establishing shared secrets|X3DH Key Agreement|
-|**One-Time Prekeys (OTPK)**||||
-|OTPK_priv / OTPK_pub|X25519|One-time prekeys for initiating secure sessions|X3DH Key Agreement|
+| **Key Type**                     | **Algorithm** | **Purpose**                                     | **Usage in Protocol**        |
+| -------------------------------- | ------------- | ----------------------------------------------- | ---------------------------- |
+| **Identity Key Pairs (IK)**      |               |                                                 |                              |
+| IK_ed25519_priv / IK_ed25519_pub | Ed25519       | Long-term identity and signing                  | Message Signing, SPK Signing |
+| IK_x25519_priv / IK_x25519_pub   | X25519        | Long-term identity and key agreement            | X3DH Key Agreement           |
+| **Signed Prekey Pair (SPK)**     |               |                                                 |                              |
+| SPK_priv / SPK_pub               | X25519        | Signed prekeys for establishing shared secrets  | X3DH Key Agreement           |
+| **One-Time Prekeys (OTPK)**      |               |                                                 |                              |
+| OTPK_priv / OTPK_pub             | X25519        | One-time prekeys for initiating secure sessions | X3DH Key Agreement           |
 
 For detailed key information, refer to the [Key Documentation](Keys.md).
 
@@ -139,7 +139,6 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 ### 3. Establishing Secure Communication
 
 **Initiating Client (Sender):**
-	More information about Messages [here](Messages.md)
 
 - **Retrieve Receiver's Public Keys:**
     - Obtain receiver's public keys from the server using their UserID.
@@ -155,11 +154,12 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
     - Hash the combination of sender's and receiver's UserIDs to generate a `MessageID` for the conversation.
 - **Send Message:**
     - Send the encrypted and signed message to the server along with `MessageID` and the current `Hash` of the `EncryptedMessage` for the hash chain.
-
+	More information about Messages [here](Messages.md)
+	
 **Server Side:**
 
 - **Store Message:**
-    - Store the message with `MessageID`, `Hash`, and `PrevHash` in the HashChain Table.
+    - Store the message with `MessageID`, `Hash`, and `PrevHash` in the HashLink Table.
 - **Relay Message:**
     - Forward the message without accessing its content or knowing sender and receiver identities.
 
