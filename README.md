@@ -44,7 +44,7 @@ Whispurr aims to provide secure, end-to-end encrypted messaging with minimal met
 
 - **Key Storage:** Maintains users' public keys linked to their UserIDs, derived from their public signing keys.
 - **Message Relay:** Stores and forwards encrypted messages without accessing their content or identifying sender and receiver.
-- **Data Storage:** Uses an SQL backend to store public keys and encrypted messages.
+- **Data Storage:** Uses an backend to store public keys and encrypted messages.
 
 ## Cryptographic Components
 
@@ -70,19 +70,23 @@ Whispurr aims to provide secure, end-to-end encrypted messaging with minimal met
 - **Padding**
     - **ISO/IEC 7816-4:** Pads messages to a fixed length before encryption to mitigate metadata leakage.
 
+- **Sigsum Integration**
+	- **Tamper-Resistant Storage:** Stores Identity Keys (IK_pub) and Signed Prekeys (SPK_pub) in an append-only Sigsum log.
+	- **Cryptographic Proofs:** Ensures transparency and integrity through cryptographic inclusion proofs.
+
+*see more in [[DesignDecisions]]*
 ## Key Management
 
 ### Key Types
 
-| **Key Type**                     | **Algorithm** | **Purpose**                                     | **Usage in Protocol**        |
-| -------------------------------- | ------------- | ----------------------------------------------- | ---------------------------- |
-| **Identity Key Pairs (IK)**      |               |                                                 |                              |
-| IK_ed25519_priv / IK_ed25519_pub | Ed25519       | Long-term identity and signing                  | Message Signing, SPK Signing |
-| IK_x25519_priv / IK_x25519_pub   | X25519        | Long-term identity and key agreement            | X3DH Key Agreement           |
-| **Signed Prekey Pair (SPK)**     |               |                                                 |                              |
-| SPK_priv / SPK_pub               | X25519        | Signed prekeys for establishing shared secrets  | X3DH Key Agreement           |
-| **One-Time Prekeys (OTPK)**      |               |                                                 |                              |
-| OTPK_priv / OTPK_pub             | X25519        | One-time prekeys for initiating secure sessions | X3DH Key Agreement           |
+| **Key Type**                 | **Algorithm**  | **Purpose**                                     | **Usage in Protocol**           |
+| ---------------------------- | -------------- | ----------------------------------------------- | ------------------------------- |
+| **Identity Key Pairs (IK)**  |                |                                                 |                                 |
+| IK_25519_priv / IK_25519_pub | Ed25519/X25519 | Permanent identity, signing and key agreement   | SPK Signing, X3DH Key Agreement |
+| **Signed Prekey Pair (SPK)** |                |                                                 |                                 |
+| SPK_priv / SPK_pub           | X25519         | Signed prekeys for establishing shared secrets  | X3DH Key Agreement              |
+| **One-Time Prekeys (OTPK)**  |                |                                                 |                                 |
+| OTPK_priv / OTPK_pub         | X25519         | One-time prekeys for initiating secure sessions | X3DH Key Agreement              |
 
 For detailed key information, refer to the [Key Documentation](Keys.md).
 
@@ -116,7 +120,7 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 **Client Side:**
 
 - **Generate UserID:**
-    - Hash the public signing key using BLAKE2b to create a unique UserID.
+    - Hash the IK_pub using BLAKE2b to create a unique UserID.
 - **Key Generation:**
     - Generate a long-term Ed25519 signing key pair.
     - Generate initial keys for X3DH and Double Ratchet protocols.
@@ -211,6 +215,8 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 - **Out-of-Band Verification:**
     - Encourage users to verify public keys through secure, external methods, protecting against MITM attacks during key exchanges.
 
+- **Sigsum Integration:**
+	- Employs Sigsum for transparent and tamper-evident storage of long-term keys, ensuring that any modifications are cryptographically verifiable.
 ## Server's Limited Role
 
 - **Cannot Link Messages to Users:**
@@ -221,6 +227,8 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 - **Message Identification:**
     - Messages are indexed using hashes of `SenderUserID + ReceiverUserID`.
     - Clients send the latest message hash (`PrevHash`) to fetch new messages in sequence.
+- **Sigsum Integration:**
+	- The server maintains the Sigsum log for long-term keys but cannot alter or tamper with the stored keys without detection.
 
 ---
 
@@ -228,3 +236,4 @@ For detailed technical documentation, refer to the respective markdown files:
 
 - [Database Specifications](DB.md)
 - [Key Management](Keys.md)
+- [[Messages]]

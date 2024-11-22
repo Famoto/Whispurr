@@ -2,32 +2,19 @@
 
 ## Relations and Constraints
 
-### Users Table:
-- **UserID** is the primary key for identifying each user.  
 ### Messages Table:  
 - **MessageUUID** (UUIDv4)  is the primary key for each message.
 - **MessageID** is generated as a hash of UserID_Sender and UserID_Receiver, ensuring privacy.  
 
 ### HashChain Table:
-
 - **MessageUUID** links to the message in the `Messages Table`.
 - **Hash** is the hash of the current message's `EncryptedMessage`.
 - **PrevHash** is the hash of the previous message's `EncryptedMessage`, forming the chain.
 
-### Keys Table:  
-- **UserID** is a foreign key linked to the Users Table. It stores active, next, and revoked keys for each user.
-- Each user has different types of keys stored (e.g., identity, pre-key).  
+### Keys Table:
+- **UserID** is a foreign key linked to the Users Table.
+- **Key** stores **one-time pre-keys** for each user.
 
-## Users Table
-
-| Column       | Type       | Description                                                 |
-|--------------|------------|-------------------------------------------------------------|
-| `UserID`     | BINARY(32) | Unique ID derived from the public signing key (e.g., BLAKE2b hash). |
-| `PublicKeys` | JSON       | Stores active public key and pre-keys (identity key, signed pre-key, one-time pre-keys). |
-### Explanation:
-
-- **UserID** is derived from the user’s public signing key using the cryptographic hash function BLAKE2b.
-- **PublicKeys** contains various public keys required for encrypted communications, including identity keys, signed pre-keys, and one-time pre-keys.
 ## Messages Table
 
 | Column             | Type       | Description                                                   |
@@ -58,10 +45,9 @@
 - When a client requests new messages, it provides the `Hash` of its most recent message. The server can fetch the next messages in the chain and ensure they match the `PrevHash` provided by the client.
 ## Keys Table
 
-| Column      | Type       | Constraints                                                        | Description                                                     |
-| ----------- | ---------- | ------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `KeyID`     | UUID       | PRIMARY KEY, DEFAULT gen_random_uuid()                             | Unique identifier for each key entry.                           |
-| `UserID`    | BINARY(32) | FOREIGN KEY REFERENCES `Users(UserID)` ON DELETE CASCADE, NOT NULL | Identifier of the user owning the key.                          |
-| `Key`       | BYTEA      | NOT NULL                                                           | Public key data (e.g., X25519 public key).                      |
-| `Type`      | ENUM       | NOT NULL                                                           | Key type (`identity`, `signed_pre-key`, `one_time_pre-key`).    |
-| `Signature` | BYTEA      | NULLABLE                                                           | Ed25519 signature of the key (applicable for `signed_pre-key`). |
+| Column   | Type       | Constraints                            | Description                                          |
+| -------- | ---------- | -------------------------------------- | ---------------------------------------------------- |
+| `KeyID`  | UUID       | PRIMARY KEY, DEFAULT gen_random_uuid() | Unique identifier for each key entry.                |
+| `UserID` | BINARY(32) | NOT NULL                               | Identifier of the user owning the key.               |
+| `Key`    | BYTEA      | NOT NULL                               | one-time pre-key public key data (X25519 public key) |
+

@@ -441,7 +441,3 @@ Communication after establishing a secure session.
 |**Initial**|Initiate secure communication|Encrypted with recipient's public keys|Establish shared secret via X3DH|Ed25519 signature over header and body|
 |**Common**|Ongoing secure communication|Encrypted with session keys from Double Ratchet|Continuous key updates via Double Ratchet|Ed25519 signature over header and body|
 |**Group**|Multi-party secure communication|Encrypted with group session keys|Extended Double Ratchet for groups|Ed25519 signature on Central Validation Message|
-
----
-
-This specification ensures a robust and secure messaging protocol by meticulously defining message states, cryptographic practices, and security measures. The protocol emphasizes user privacy, message integrity, and resistance to various security threats, making it suitable for secure, real-time communication.
