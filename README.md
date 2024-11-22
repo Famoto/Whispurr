@@ -74,7 +74,7 @@ Whispurr aims to provide secure, end-to-end encrypted messaging with minimal met
 	- **Tamper-Resistant Storage:** Stores Identity Keys (IK_pub) and Signed Prekeys (SPK_pub) in an append-only Sigsum log.
 	- **Cryptographic Proofs:** Ensures transparency and integrity through cryptographic inclusion proofs.
 
-*see more in [[DesignDecisions]]*
+*see more in [DesignDecisions](DesignDecisions.md)*
 ## Key Management
 
 ### Key Types
@@ -236,4 +236,4 @@ For detailed technical documentation, refer to the respective markdown files:
 
 - [Database Specifications](DB.md)
 - [Key Management](Keys.md)
-- [[Messages]]
+- [Messages](Messages.md)
