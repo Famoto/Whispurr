@@ -1,4 +1,4 @@
-# Whispurr: A Minimal Metadata Secure Messenger
+# Whispurr: A Minimal Metadata Messenger
 
 Whispurr is an end-to-end encrypted messenger inspired by Signal, designed to minimize metadata while maintaining simplicity and robust security.
 ## Table of Contents
