@@ -19,7 +19,7 @@ Whispurr is engineered as an end-to-end encrypted messaging platform that priori
 
 **Cryptographic Proof:** Given BLAKE2b's pre-image resistance property, an adversary cannot feasibly find two distinct public keys that produce the same UserID. Formally, for a hash function HHH, it holds that:
 
-$\text{UserID} = \text{BLAKE2b}(\text{IK\_pub})$
+$`\text{UserID} = \text{BLAKE2b}(\text{IK\_pub})`$
 
 It is computationally infeasible to find distinct $IKpub_1≠IKpub_2$ such that $H(IKpub_1)=H(IKpub_2)$ ensuring the uniqueness and security of UserIDs.
 
@@ -37,7 +37,7 @@ It is computationally infeasible to find distinct $IKpub_1≠IKpub_2$ such that 
     
 
 **Cryptographic Proof:** In X3DH, the shared secret is derived from multiple Diffie-Hellman exchanges:
-$\text{Shared Secret} = DH(\text{IK\_priv}, \text{EK\_pub}) \oplus DH(\text{SK\_priv}, \text{SPK\_pub}) \oplus DH(\text{SK\_priv}, \text{OPK\_pub})$
+$`\text{Shared Secret} = DH(\text{IK\_priv}, \text{EK\_pub}) \oplus DH(\text{SK\_priv}, \text{SPK\_pub}) \oplus DH(\text{SK\_priv}, \text{OPK\_pub})`$
 
 Assuming the hardness of the Diffie-Hellman problem in the chosen elliptic curve group (X25519), the shared secret remains secure even if some components are compromised, provided that the one-time pre-keys (OPK) are not reused or exposed. This composition ensures that the overall key agreement retains the security properties of its constituent DH exchanges.
 
