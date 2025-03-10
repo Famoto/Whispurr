@@ -215,21 +215,6 @@ Given the security properties of ChaCha20 and Poly1305, along with proper nonce 
 
 **Justification:** Under the zero-knowledge model, the server possesses no information that could compromise user privacy or message confidentiality. Provided that all cryptographic protocols are correctly implemented and the server does not engage in side-channel data collection.
 
-## 5.2 Sigsum Integration for Tamper-Resistant Key Storage
-
-**Design Decision:** Whispurr integrates Sigsum to store Identity Keys (IK_pub) and Signed Prekeys (SPK_pub) in an append-only log, accompanied by cryptographic inclusion proofs.
-
-**Rationale and Cryptographic Justification:**
-
-- **Tamper Evidence:** Sigsum's append-only nature ensures that any unauthorized modifications to the key storage are detectable, preserving the integrity of the public keys.
-    
-- **Transparency and Trust:** Cryptographic inclusion proofs allow clients to verify the authenticity and consistency of the stored keys, fostering trust in the key distribution mechanism.
-    
-- **Decentralization of Trust:** By utilizing a tamper-resistant log, Whispurr minimizes reliance on a single trusted server entity, distributing trust across the cryptographic proofs provided by Sigsum.
-    
-
-**Justification:** The security of the Sigsum integration relies on the collision resistance and append-only properties of the underlying hash function used in the log. Any attempt to alter stored keys without detection would require finding a collision or breaking the hash function's properties, which is computationally infeasible.
-
 # 6. Comparison Whispurr vs Signal
 
 **User Identification**
@@ -242,7 +227,7 @@ Given the security properties of ChaCha20 and Poly1305, along with proper nonce 
 - **Signal:** Utilizes the X3DH protocol for key exchange and employs AES-256 with HMAC-SHA256 for message encryption, benefiting from widespread hardware acceleration.
 
 **Key Management**
-- **Whispurr:** Maintains a hierarchical key structure with Identity Keys, Signed Prekeys, and One-Time Prekeys, integrated with Sigsum for tamper-resistant, append-only key storage.
+- **Whispurr:** Maintains a hierarchical key structure with Identity Keys, Signed Prekeys, and One-Time Prekeys.
 - **Signal:** Also uses Identity Keys, Signed Prekeys, and One-Time Prekeys but manages them through centralized servers without an append-only log, relying on server security.
 
 **Privacy Measures**
@@ -253,5 +238,5 @@ Given the security properties of ChaCha20 and Poly1305, along with proper nonce 
 - **Whispurr and Signal:** Provides in-app verification methods like QR code scanning and safety numbers for user convenience and secure key authentication.
 
 **Server Architecture**
-- **Whispurr:** Adopts a zero-knowledge architecture with Sigsum integration, ensuring servers store only public keys and encrypted messages without the ability to tamper or link data.
+- **Whispurr:** Adopts a zero-knowledge architecture, ensuring servers store only public keys and encrypted messages without the ability to tamper or link data.
 - **Signal:** Implements a zero-knowledge model where servers handle message relay and key distribution but rely on centralized infrastructure for key storage and management.
