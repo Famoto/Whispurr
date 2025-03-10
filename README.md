@@ -70,10 +70,6 @@ Whispurr aims to provide secure, end-to-end encrypted messaging with minimal met
 - **Padding**
     - **ISO/IEC 7816-4:** Pads messages to a fixed length before encryption to mitigate metadata leakage.
 
-- **Sigsum Integration**
-	- **Tamper-Resistant Storage:** Stores Identity Keys (IK_pub) and Signed Prekeys (SPK_pub) in an append-only Sigsum log.
-	- **Cryptographic Proofs:** Ensures transparency and integrity through cryptographic inclusion proofs.
-
 *see more in [DesignDecisions](DesignDecisions.md)*
 ## Key Management
 
@@ -215,8 +211,6 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 - **Out-of-Band Verification:**
     - Encourage users to verify public keys through secure, external methods, protecting against MITM attacks during key exchanges.
 
-- **Sigsum Integration:**
-	- Employs Sigsum for transparent and tamper-evident storage of long-term keys, ensuring that any modifications are cryptographically verifiable.
 ## Server's Limited Role
 
 - **Cannot Link Messages to Users:**
@@ -227,8 +221,6 @@ For detailed key information, refer to the [Key Documentation](Keys.md).
 - **Message Identification:**
     - Messages are indexed using hashes of `SenderUserID + ReceiverUserID`.
     - Clients send the latest message hash (`PrevHash`) to fetch new messages in sequence.
-- **Sigsum Integration:**
-	- The server maintains the Sigsum log for long-term keys but cannot alter or tamper with the stored keys without detection.
 
 ---
 
